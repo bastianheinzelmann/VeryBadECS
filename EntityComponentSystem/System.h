@@ -17,7 +17,7 @@ public:
 		m_manager = manager;
 	}
 
-	void updateAllEntities(float deltaTime)
+	virtual void updateAllEntities(float deltaTime)
 	{
 		for (auto entity : m_entities)
 		{
