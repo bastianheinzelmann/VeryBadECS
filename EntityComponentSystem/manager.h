@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ComponentManager.h"
 #include <unordered_map>
 #include <typeindex>
@@ -6,32 +8,13 @@
 #include <iostream>
 #include <utility>
 #include <stdexcept>
-
-
-typedef unsigned int Entity;
+#include <list>
+#include <set>
+#include "System.h"
+#include "Entity.h"
 
 struct Component
 {
-};
-
-struct TransformComponent : Component
-{
-	std::string test;
-
-	TransformComponent()
-	{
-		test = "hallo";
-	}
-};
-
-struct AIComponent : Component
-{
-	int x;
-
-	AIComponent()
-	{
-		x = 1;
-	}
 };
 
 class Manager
@@ -124,9 +107,43 @@ public:
 		}
 	}
 
+	void registerSystem(System* system)
+	{
+		m_systems.push_back(system);
+	}
+
+	void subscribeToSystems(Entity entity)
+	{
+		for (auto system : m_systems)
+		{
+			bool addToSystem = true;
+
+			for (auto reqComp : system->m_requiredComponents)
+			{
+				if (m_entities[entity].find(reqComp) == m_entities[entity].end())
+				{
+					addToSystem = false;
+				}
+			}
+
+			if(addToSystem)
+				system->m_entities.insert(entity);
+		}
+	}
+
+	void updateAllSystems(float deltaTime)
+	{
+		for (auto system : m_systems)
+		{
+			system->updateAllEntities(deltaTime);
+		}
+	}
+
 private:
 	unsigned int m_lastIndex = 0;
 	std::unordered_map<std::type_index, IComponentManager*> m_componentManagers;
 
 	std::unordered_map<Entity, std::unordered_map<std::type_index, unsigned int>> m_entities;
+
+	std::list<System*> m_systems;
 };

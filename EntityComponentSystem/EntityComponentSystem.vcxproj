@@ -119,7 +119,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="manager.h" />
+    <ClInclude Include="System.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
